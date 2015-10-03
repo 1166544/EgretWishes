@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<e:Skin states="up,over,down,disabled" xmlns:e="http://ns.egret.com/eui"> 
+	<e:Image source="resource/style/starttip.png" includeIn="up" width="100%" height="100%"/> 
+	<e:Image source="resource/style/starttip_over.png" includeIn="down" width="100%" height="100%"/> 
+	<e:Image source="resource/style/starttip.png" includeIn="disabled" width="100%" height="100%"/> 
+	<e:Label id="labelDisplay" text="按钮" left="0" right="0" top="0" bottom="0"/> 
+</e:Skin>
