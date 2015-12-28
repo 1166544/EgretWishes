@@ -49,4 +49,3 @@ var CountBaseView = (function (_super) {
     return CountBaseView;
 })(eui.Group);
 egret.registerClass(CountBaseView,"CountBaseView",["ICountView"]);
-//# sourceMappingURL=CountBaseView.js.map

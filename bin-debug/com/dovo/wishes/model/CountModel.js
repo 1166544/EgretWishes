@@ -74,4 +74,3 @@ var CountModel = (function () {
     return CountModel;
 })();
 egret.registerClass(CountModel,"CountModel");
-//# sourceMappingURL=CountModel.js.map

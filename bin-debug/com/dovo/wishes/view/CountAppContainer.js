@@ -108,4 +108,3 @@ var CountAppContainer = (function (_super) {
     return CountAppContainer;
 })(eui.Group);
 egret.registerClass(CountAppContainer,"CountAppContainer");
-//# sourceMappingURL=CountAppContainer.js.map

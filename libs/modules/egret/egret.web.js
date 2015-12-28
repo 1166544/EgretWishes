@@ -1240,7 +1240,7 @@ var egret;
                 video.style.top = "0px";
                 video.style.left = "0px";
                 video.height = this.heightSet;
-                video.width = this.widthSet;
+                video.width = 0; //为了解决视频返回挤压页面内容
                 this.checkFullScreen(this._fullscreen);
             };
             p.checkFullScreen = function (playFullScreen) {
@@ -1829,7 +1829,7 @@ var egret;
              * @param url 要加载的图像文件的地址。
              */
             p.load = function (url) {
-                if (web.Html5Capatibility._canUseBlob && url.indexOf("data:") != 0 && url.indexOf("http:") != 0 && url.indexOf("https:") != 0) {
+                if (web.Html5Capatibility._canUseBlob && url.indexOf("wxLocalResource:") != 0 && url.indexOf("data:") != 0 && url.indexOf("http:") != 0 && url.indexOf("https:") != 0) {
                     var request = this.request;
                     if (!request) {
                         request = this.request = new egret.web.WebHttpRequest();
@@ -2249,7 +2249,14 @@ var egret;
                     this.setElementStyle("textAlign", textfield.textAlign);
                     this.setElementStyle("fontSize", textfield.size * this._gscaleY + "px");
                     this.setElementStyle("color", egret.toColorString(textfield.textColor));
-                    this.setElementStyle("width", textfield.width * this._gscaleX + "px");
+                    if (textfield.stage) {
+                        var tw = textfield.localToGlobal(0, 0).x;
+                        tw = Math.min(textfield.width, textfield.stage.stageWidth - tw);
+                    }
+                    else {
+                        tw = textfield.width;
+                    }
+                    this.setElementStyle("width", tw * this._gscaleX + "px");
                     this.setElementStyle("verticalAlign", textfield.verticalAlign);
                     if (textfield.multiline) {
                         this.setAreaHeight();
@@ -2271,7 +2278,7 @@ var egret;
                     }
                     this.inputDiv.style.clip = "rect(0px " + (textfield.width * this._gscaleX) + "px " + (textfield.height * this._gscaleY) + "px 0px)";
                     this.inputDiv.style.height = textfield.height * this._gscaleY + "px";
-                    this.inputDiv.style.width = textfield.width * this._gscaleX + "px";
+                    this.inputDiv.style.width = tw * this._gscaleX + "px";
                 }
             };
             return HTML5StageText;
@@ -2338,6 +2345,9 @@ var egret;
              *
              */
             p.$updateSize = function () {
+                if (!this.canvas) {
+                    return;
+                }
                 var stageW = this.canvas.width;
                 var stageH = this.canvas.height;
                 var screenW = this.canvas.style.width.split("px")[0];
@@ -2523,13 +2533,24 @@ var egret;
     var web;
     (function (web) {
         var stageToTextLayerMap = {};
+        var stageToCanvasMap = {};
+        var stageToContainerMap = {};
         /**
          * @private
          * 获取
          */
         function $getTextAdapter(textfield) {
             var stageHash = textfield.stage ? textfield.stage.$hashCode : 0;
-            return stageToTextLayerMap[stageHash];
+            var adapter = stageToTextLayerMap[stageHash];
+            var canvas = stageToCanvasMap[stageHash];
+            var container = stageToContainerMap[stageHash];
+            if (canvas && container) {
+                //adapter._initStageDelegateDiv(container, canvas);
+                //adapter.$updateSize();
+                delete stageToCanvasMap[stageHash];
+                delete stageToContainerMap[stageHash];
+            }
+            return adapter;
         }
         web.$getTextAdapter = $getTextAdapter;
         /**
@@ -2538,6 +2559,8 @@ var egret;
         function $cacheTextAdapter(adapter, stage, container, canvas) {
             adapter._initStageDelegateDiv(container, canvas);
             stageToTextLayerMap[stage.$hashCode] = adapter;
+            stageToCanvasMap[stage.$hashCode] = canvas;
+            stageToContainerMap[stage.$hashCode] = container;
         }
         web.$cacheTextAdapter = $cacheTextAdapter;
     })(web = egret.web || (egret.web = {}));
@@ -3310,6 +3333,9 @@ var egret;
          * 当网页尺寸发生改变时此方法会自动被调用。
          */
         function updateAllScreens() {
+            if (!isRunning) {
+                return;
+            }
             var containerList = document.querySelectorAll(".egret-player");
             var length = containerList.length;
             for (var i = 0; i < length; i++) {
@@ -3318,11 +3344,16 @@ var egret;
                 player.updateScreenSize();
             }
         }
+        var isRunning = false;
         /**
          * @private
          * 网页加载完成，实例化页面中定义的Egretsys标签
          */
         function runEgret() {
+            if (isRunning) {
+                return;
+            }
+            isRunning = true;
             if (DEBUG) {
                 var language = navigator.language || navigator.browserLanguage || "en_US";
                 language = language.replace("-", "_");
@@ -3365,50 +3396,6 @@ var egret;
         window["isNaN"] = function (value) {
             value = +value;
             return value !== value;
-        };
-        /**
-         * @private
-         *
-         * @param argument
-         */
-        function toArray(argument) {
-            var args = [];
-            for (var i = 0; i < argument.length; i++) {
-                args.push(argument[i]);
-            }
-            return args;
-        }
-        egret.warn = function () {
-            console.warn.apply(console, toArray(arguments));
-        };
-        egret.error = function () {
-            console.error.apply(console, toArray(arguments));
-        };
-        egret.assert = function () {
-            console.assert.apply(console, toArray(arguments));
-        };
-        if (DEBUG) {
-            egret.log = function () {
-                if (DEBUG) {
-                    var length = arguments.length;
-                    var info = "";
-                    for (var i = 0; i < length; i++) {
-                        info += arguments[i] + " ";
-                    }
-                    egret.sys.$logToFPS(info);
-                }
-                console.log.apply(console, toArray(arguments));
-            };
-        }
-        else {
-            egret.log = function () {
-                console.log.apply(console, toArray(arguments));
-            };
-        }
-        //兼容runtime的RenderTexture，以后应该会废弃
-        CanvasRenderingContext2D.prototype["begin"] = function () {
-        };
-        CanvasRenderingContext2D.prototype["end"] = function () {
         };
         var originCanvas2DFill = CanvasRenderingContext2D.prototype.fill;
         CanvasRenderingContext2D.prototype.fill = function () {
@@ -3691,11 +3678,9 @@ var egret;
                 var player = new egret.sys.Player(surface.renderContext, stage, option.entryClassName);
                 var webHide = new egret.web.WebHideHandler(stage);
                 var webInput = new web.HTMLInput();
-                if (DEBUG) {
-                    player.showPaintRect(option.showPaintRect);
-                    if (option.showFPS || option.showLog) {
-                        player.displayFPS(option.showFPS, option.showLog, option.logFilter, option.fpsStyles);
-                    }
+                player.showPaintRect(option.showPaintRect);
+                if (option.showFPS || option.showLog) {
+                    player.displayFPS(option.showFPS, option.showLog, option.logFilter, option.fpsStyles);
                 }
                 this.playerOption = option;
                 this.container = container;
@@ -3715,7 +3700,7 @@ var egret;
                 window.addEventListener("orientationchange", function () {
                     window.setTimeout(function () {
                         egret.StageOrientationEvent.dispatchStageOrientationEvent(self.stage, egret.StageOrientationEvent.ORIENTATION_CHANGE);
-                    }, 100);
+                    }, 350);
                 });
             };
             /**
@@ -3731,20 +3716,18 @@ var egret;
                 option.orientation = container.getAttribute("data-orientation") || egret.OrientationMode.AUTO;
                 option.maxTouches = +container.getAttribute("data-multi-fingered") || 2;
                 option.textureScaleFactor = +container.getAttribute("texture-scale-factor") || 1;
-                if (DEBUG) {
-                    option.showPaintRect = container.getAttribute("data-show-paint-rect") == "true";
-                    option.showFPS = container.getAttribute("data-show-fps") == "true";
-                    var styleStr = container.getAttribute("data-show-fps-style") || "";
-                    var stylesArr = styleStr.split(",");
-                    var styles = {};
-                    for (var i = 0; i < stylesArr.length; i++) {
-                        var tempStyleArr = stylesArr[i].split(":");
-                        styles[tempStyleArr[0]] = tempStyleArr[1];
-                    }
-                    option.fpsStyles = styles;
-                    option.showLog = container.getAttribute("data-show-log") == "true";
-                    option.logFilter = container.getAttribute("data-log-filter");
+                option.showPaintRect = container.getAttribute("data-show-paint-rect") == "true";
+                option.showFPS = container.getAttribute("data-show-fps") == "true";
+                var styleStr = container.getAttribute("data-show-fps-style") || "";
+                var stylesArr = styleStr.split(",");
+                var styles = {};
+                for (var i = 0; i < stylesArr.length; i++) {
+                    var tempStyleArr = stylesArr[i].split(":");
+                    styles[tempStyleArr[0]] = tempStyleArr[1];
                 }
+                option.fpsStyles = styles;
+                option.showLog = container.getAttribute("data-show-log") == "true";
+                option.logFilter = container.getAttribute("data-log-filter");
                 return option;
             };
             /**
@@ -4076,6 +4059,7 @@ var egret;
                     continue;
                 }
                 attributes[name] = attributeNode.value;
+                xml["$" + name] = attributeNode.value;
             }
             var childNodes = node.childNodes;
             length = childNodes.length;

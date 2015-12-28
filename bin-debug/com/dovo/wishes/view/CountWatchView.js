@@ -48,4 +48,3 @@ var CountWatchView = (function (_super) {
     return CountWatchView;
 })(CountBaseView);
 egret.registerClass(CountWatchView,"CountWatchView");
-//# sourceMappingURL=CountWatchView.js.map

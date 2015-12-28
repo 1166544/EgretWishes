@@ -28,4 +28,3 @@ var CountFlyIconView = (function (_super) {
     return CountFlyIconView;
 })(eui.Image);
 egret.registerClass(CountFlyIconView,"CountFlyIconView");
-//# sourceMappingURL=CountFlyIconView.js.map

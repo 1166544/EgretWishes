@@ -29,4 +29,3 @@ var CountController = (function () {
     return CountController;
 })();
 egret.registerClass(CountController,"CountController");
-//# sourceMappingURL=CountController.js.map

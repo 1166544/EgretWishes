@@ -38,4 +38,3 @@ var CountMoneyView = (function (_super) {
     return CountMoneyView;
 })(eui.Group);
 egret.registerClass(CountMoneyView,"CountMoneyView");
-//# sourceMappingURL=CountMoneyView.js.map

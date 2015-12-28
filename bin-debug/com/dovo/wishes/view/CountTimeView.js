@@ -27,4 +27,3 @@ var CountTimeView = (function (_super) {
     return CountTimeView;
 })(CountMoneyView);
 egret.registerClass(CountTimeView,"CountTimeView");
-//# sourceMappingURL=CountTimeView.js.map

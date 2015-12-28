@@ -79,4 +79,3 @@ var CountGameView = (function (_super) {
     return CountGameView;
 })(CountBaseView);
 egret.registerClass(CountGameView,"CountGameView");
-//# sourceMappingURL=CountGameView.js.map

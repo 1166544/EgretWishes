@@ -78,4 +78,3 @@ var CountOverView = (function (_super) {
     return CountOverView;
 })(CountBaseView);
 egret.registerClass(CountOverView,"CountOverView");
-//# sourceMappingURL=CountOverView.js.map

@@ -151,4 +151,3 @@ var CountGameMediator = (function () {
     return CountGameMediator;
 })();
 egret.registerClass(CountGameMediator,"CountGameMediator");
-//# sourceMappingURL=CountGameMediator.js.map

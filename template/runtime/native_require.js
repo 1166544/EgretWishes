@@ -24,6 +24,7 @@ var game_file_list = [
 	"bin-debug/com/dovo/wishes/view/mediator/CountGameMediator.js",
 	"bin-debug/com/dovo/wishes/view/mediator/CountStartMediator.js",
 	"bin-debug/Main.js",
+	"bin-debug/themeadapter.js",
 	//----auto game_file_list end----
 ];
 

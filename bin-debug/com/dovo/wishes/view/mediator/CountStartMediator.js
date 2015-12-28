@@ -18,4 +18,3 @@ var CountStartMediator = (function () {
     return CountStartMediator;
 })();
 egret.registerClass(CountStartMediator,"CountStartMediator");
-//# sourceMappingURL=CountStartMediator.js.map

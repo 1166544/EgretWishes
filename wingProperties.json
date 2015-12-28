@@ -1,15 +1,12 @@
 {
 	"close":false,
-	"resourcePlugin":
-	{
-		"configs":[
-		{
-			"configPath":"resource/default.res.json",
-			"relativePath":"resource/"
-		}],
+	"resourcePlugin":{
+		"configs":[{
+				"configPath":"resource/default.res.json",
+				"relativePath":"resource/"
+			}],
 		"id":"org.egret-labs.resource",
-		"library":
-		{
+		"library":{
 			"children":[]
 		}
 	},

@@ -39,4 +39,3 @@ var CountStartView = (function (_super) {
     return CountStartView;
 })(CountBaseView);
 egret.registerClass(CountStartView,"CountStartView");
-//# sourceMappingURL=CountStartView.js.map

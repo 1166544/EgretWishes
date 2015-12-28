@@ -34,4 +34,3 @@ var GameConsts = (function () {
     return GameConsts;
 })();
 egret.registerClass(GameConsts,"GameConsts");
-//# sourceMappingURL=GameConsts.js.map
